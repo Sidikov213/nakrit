@@ -5,15 +5,15 @@ import { migrateFriend, SEED_FRIENDS } from "./seed";
 import type { Friend } from "./types";
 
 const FRIENDS_KEY = "nakryt:friends";
+const LEGACY_FRIENDS_KEY = "nakrit:friends";
 const DATA_FILE = path.join(process.cwd(), "data", "friends.json");
 
 function getRedis(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-
-  if (!url || !token) return null;
-
-  return new Redis({ url, token });
+  try {
+    return Redis.fromEnv();
+  } catch {
+    return null;
+  }
 }
 
 function isServerless(): boolean {
@@ -55,13 +55,32 @@ async function writeToFile(friends: Friend[]): Promise<void> {
   await fs.writeFile(DATA_FILE, JSON.stringify(friends, null, 2));
 }
 
+async function readFromRedis(redis: Redis): Promise<Friend[] | null> {
+  let data = await redis.get<unknown[]>(FRIENDS_KEY);
+
+  if (data === null) {
+    data = await redis.get<unknown[]>(LEGACY_FRIENDS_KEY);
+    if (data !== null) {
+      await redis.set(FRIENDS_KEY, data);
+    }
+  }
+
+  if (data === null) {
+    return null;
+  }
+
+  return normalizeFriends(data);
+}
+
 export async function getFriends(): Promise<Friend[]> {
   const redis = getRedis();
 
   if (redis) {
     try {
-      const data = await redis.get<unknown[]>(FRIENDS_KEY);
-      if (data && data.length > 0) return normalizeFriends(data);
+      const friends = await readFromRedis(redis);
+      if (friends !== null) {
+        return friends;
+      }
 
       await redis.set(FRIENDS_KEY, SEED_FRIENDS);
       return SEED_FRIENDS;

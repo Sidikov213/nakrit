@@ -104,15 +104,22 @@ export function AdminPanel() {
   async function handleDelete(id: string) {
     if (!confirm("Удалить из списка?")) return;
 
+    setError("");
+    setMessage("");
+
     const response = await fetch(`/api/friends/${id}`, { method: "DELETE" });
+    const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      setError("Не удалось удалить");
+      setError(
+        (data as { error?: string }).error ??
+          "Не удалось удалить. Проверь, что Redis подключён на Vercel.",
+      );
       return;
     }
 
+    setFriends((current) => current.filter((friend) => friend.id !== id));
     setMessage("Удалено");
-    await loadFriends();
   }
 
   async function handleAddPayment(friendId: string) {

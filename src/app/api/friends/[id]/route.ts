@@ -31,7 +31,13 @@ export async function PUT(request: Request, context: RouteContext) {
   };
 
   friends[index] = updated;
-  await saveFriends(friends);
+  try {
+    await saveFriends(friends);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to save changes";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 
   return NextResponse.json(updated);
 }
@@ -41,14 +47,20 @@ export async function DELETE(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await context.params;
-  const friends = await getFriends();
-  const filtered = friends.filter((friend) => friend.id !== id);
+  try {
+    const { id } = await context.params;
+    const friends = await getFriends();
+    const filtered = friends.filter((friend) => friend.id !== id);
 
-  if (filtered.length === friends.length) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (filtered.length === friends.length) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    await saveFriends(filtered);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to save changes";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  await saveFriends(filtered);
-  return NextResponse.json({ ok: true });
 }
