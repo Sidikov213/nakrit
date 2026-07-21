@@ -14,7 +14,7 @@ export function RandomPicker() {
     setError("");
     setResult(null);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
 
     try {
       const response = await fetch("/api/random", { method: "POST" });
@@ -34,48 +34,42 @@ export function RandomPicker() {
   }
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-amber-500/25 bg-gradient-to-br from-amber-500/12 via-zinc-900/90 to-zinc-950 p-8 text-center shadow-2xl shadow-amber-500/10">
-      <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-amber-400/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-orange-500/10 blur-3xl" />
-
-      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-amber-400/80">
-        Решаем судьбу
-      </p>
-      <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">
-        Кто накроет сегодня?
-      </h2>
-      <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-400">
-        Чем чаще уже накрывал — тем выше шанс снова. Справедливо? Нет. Зато
-        смешно.
-      </p>
+    <section className="surface-elevated rounded-2xl px-6 py-10 text-center sm:px-10">
+      <div className="section-heading mx-auto max-w-sm">
+        <p className="label">Решаем судьбу</p>
+        <h2 className="display mt-2 text-3xl sm:text-4xl">Случайный выбор</h2>
+        <p>
+          Чем чаще уже накрывал — тем выше шанс. Справедливо? Нет. Зато смешно.
+        </p>
+      </div>
 
       <button
         type="button"
         onClick={handlePick}
         disabled={spinning}
-        className="btn-primary mt-8 rounded-full px-10 py-3.5 text-base font-bold text-zinc-950 disabled:cursor-not-allowed disabled:opacity-60"
+        className="btn mt-8 px-8 py-3"
       >
-        {spinning ? "Крутим барабан..." : "🎲 Выбрать случайно"}
+        {spinning ? "Выбираем..." : "Выбрать случайно"}
       </button>
 
       {spinning && (
-        <div className="mt-8 animate-float text-6xl">🎰</div>
+        <p className="mt-8 text-sm text-[var(--text-subtle)]">Один момент...</p>
       )}
 
       {result && !spinning && (
-        <div className="mt-8 animate-in rounded-2xl border border-amber-400/30 bg-amber-400/10 p-6 ring-1 ring-amber-400/20">
-          <p className="text-6xl">{result.emoji}</p>
-          <p className="mt-3 text-3xl font-black text-amber-100">{result.name}</p>
-          <p className="mt-1 text-sm text-zinc-400">
+        <div className="animate-in mx-auto mt-8 max-w-sm rounded-xl border border-[var(--accent-soft)] bg-[var(--surface-warm)] px-6 py-8">
+          <p className="text-4xl">{result.emoji}</p>
+          <p className="display mt-4 text-3xl">{result.name}</p>
+          <p className="mt-2 text-sm text-[var(--text-muted)]">
             Уже накрывал {pluralTimes(getPaymentCount(result))}
           </p>
-          <p className="mt-4 inline-block rounded-full bg-amber-400/20 px-4 py-1.5 text-base font-semibold text-amber-200">
-            Сегодня платит {result.name}! 💸
+          <p className="mt-5 rounded-full bg-[var(--accent-muted)] px-4 py-2 text-sm font-medium text-[var(--accent-hover)]">
+            Сегодня платит {result.name}
           </p>
         </div>
       )}
 
-      {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-4 text-sm text-[#9b4a3a]">{error}</p>}
     </section>
   );
 }

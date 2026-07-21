@@ -16,14 +16,12 @@ export function FriendsList({ friends }: FriendsListProps) {
 
   return (
     <section>
-      <h2 className="section-title mb-2">
-        <span>📋</span>
-        <span>Полный список</span>
-      </h2>
-      <p className="mb-6 text-sm text-zinc-500">
-        Нажми на человека — увидишь причину каждого раза
-      </p>
-      <div className="space-y-3">
+      <div className="section-heading">
+        <h2>Полный список</h2>
+        <p>Нажми на человека — увидишь причину каждого раза</p>
+      </div>
+
+      <div className="list-card divide-y divide-[var(--border)] overflow-hidden rounded-xl">
         {friends.map((friend, index) => {
           const count = getPaymentCount(friend);
           const isExpanded = expandedId === friend.id;
@@ -31,79 +29,70 @@ export function FriendsList({ friends }: FriendsListProps) {
           return (
             <article
               key={friend.id}
-              className={`overflow-hidden rounded-2xl border transition-all duration-200 ${
-                isExpanded
-                  ? "border-amber-500/30 bg-zinc-900/80 shadow-lg shadow-amber-500/5"
-                  : "border-zinc-800/80 bg-zinc-900/40 hover:border-zinc-700"
-              }`}
+              className={isExpanded ? "list-expanded" : ""}
             >
               <button
                 type="button"
                 onClick={() =>
                   setExpandedId(isExpanded ? null : friend.id)
                 }
-                className="w-full p-4 text-left sm:p-5"
+                className="list-row w-full px-5 py-5 text-left transition-colors sm:px-5"
               >
                 <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-800 text-xs font-bold text-zinc-400">
-                      {index + 1}
+                  <div className="flex items-center gap-4">
+                    <span className="label w-5 shrink-0 text-center">
+                      {String(index + 1).padStart(2, "0")}
                     </span>
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 text-2xl ring-1 ring-zinc-700/50">
+                    <span className="avatar-warm flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xl">
                       {friend.emoji}
                     </span>
                     <div>
-                      <p className="font-semibold text-white">{friend.name}</p>
-                      <p className="text-sm text-zinc-500">
+                      <p className="font-medium text-[var(--text)]">{friend.name}</p>
+                      <p className="mt-0.5 text-sm text-[var(--text-subtle)]">
                         {count === 0
                           ? "Ещё ни разу не накрывал"
-                          : `Накрывал ${pluralTimes(count)}`}
+                          : pluralTimes(count)}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="text-2xl font-black text-amber-300">{count}</p>
-                      <p className="text-[10px] uppercase tracking-wider text-zinc-600">
-                        накрыл
-                      </p>
-                    </div>
+                  <div className="flex items-center gap-4">
+                    <p className="display text-2xl text-[var(--accent)]">{count}</p>
                     <span
-                      className={`flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800 text-xs text-zinc-400 transition-transform duration-200 ${isExpanded ? "rotate-180 bg-amber-500/15 text-amber-300" : ""}`}
+                      className={`text-[var(--text-subtle)] transition-transform duration-200 ${isExpanded ? "rotate-180 text-[var(--accent)]" : ""}`}
                     >
-                      ▼
+                      ↓
                     </span>
                   </div>
                 </div>
-                <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-zinc-800/80">
+                <div className="progress-track mt-4 h-1.5 overflow-hidden rounded-full">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-amber-600 via-amber-400 to-yellow-300 transition-all duration-500"
+                    className="progress-fill h-full rounded-full transition-all duration-500"
                     style={{ width: `${(count / maxCount) * 100}%` }}
                   />
                 </div>
               </button>
 
               {isExpanded && (
-                <div className="animate-in border-t border-zinc-800/80 bg-zinc-950/40 px-4 py-4 sm:px-5">
+                <div className="animate-in border-t border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4">
                   {friend.payments.length === 0 ? (
-                    <p className="text-sm text-zinc-500">
-                      Пока чист — ни разу не платил ✨
+                    <p className="text-sm text-[var(--text-subtle)]">
+                      Пока чист — ни разу не платил
                     </p>
                   ) : (
-                    <ol className="space-y-2">
+                    <ol className="space-y-3">
                       {friend.payments.map((payment, paymentIndex) => (
                         <li
                           key={payment.id}
-                          className="flex gap-3 rounded-xl border border-zinc-800/60 bg-zinc-900/60 px-3 py-3"
+                          className="flex gap-4 border-b border-[var(--border)] pb-3 last:border-0 last:pb-0"
                         >
-                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-xs font-bold text-amber-300 ring-1 ring-amber-500/20">
+                          <span className="label mt-0.5 w-5 shrink-0">
                             {paymentIndex + 1}
                           </span>
                           <div>
-                            <p className="text-sm leading-relaxed text-zinc-200">
+                            <p className="text-sm leading-relaxed text-[var(--text)]">
                               {payment.reason}
                             </p>
-                            <p className="mt-1 text-xs text-zinc-500">
+                            <p className="mt-1 text-xs text-[var(--text-subtle)]">
                               {formatDate(payment.date)}
                             </p>
                           </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,8 +12,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin", "cyrillic"],
+  weight: ["500", "600"],
+});
+
 export const metadata: Metadata = {
-  title: "Накрит — кто платит в кафе?",
+  title: "Накрыть — кто платит в кафе?",
   description: "Шуточный рейтинг друзей, кто должен накрыть в кафешках",
 };
 
@@ -25,11 +31,9 @@ export default function RootLayout({
   return (
     <html
       lang="ru"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-zinc-950 font-sans text-zinc-100">
-        {children}
-      </body>
+      <body className="min-h-full font-sans">{children}</body>
     </html>
   );
 }

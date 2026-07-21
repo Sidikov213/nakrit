@@ -176,31 +176,28 @@ export function AdminPanel() {
   }
 
   if (loading) {
-    return <p className="text-center text-zinc-400">Загрузка...</p>;
+    return <p className="text-center text-[var(--text-subtle)]">Загрузка...</p>;
   }
 
   if (!isAdmin) {
     return (
       <form
         onSubmit={handleLogin}
-        className="mx-auto max-w-sm rounded-3xl border border-zinc-800 bg-zinc-900/60 p-8"
+        className="surface-elevated mx-auto max-w-sm rounded-2xl p-8"
       >
-        <h1 className="text-center text-2xl font-bold text-white">🔐 Админка</h1>
-        <p className="mt-2 text-center text-sm text-zinc-400">
-          Только избранные могут редактировать список
+        <h1 className="display text-center text-3xl">Вход</h1>
+        <p className="mt-2 text-center text-sm text-[var(--text-subtle)]">
+          Только для тех, кто управляет списком
         </p>
         <input
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           placeholder="Пароль"
-          className="mt-6 w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-amber-400"
+          className="input mt-6"
         />
-        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
-        <button
-          type="submit"
-          className="mt-4 w-full rounded-xl bg-amber-400 py-3 font-semibold text-zinc-950 hover:bg-amber-300"
-        >
+        {error && <p className="alert-error mt-3">{error}</p>}
+        <button type="submit" className="btn mt-4 w-full py-3">
           Войти
         </button>
       </form>
@@ -211,36 +208,24 @@ export function AdminPanel() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">⚙️ Управление списком</h1>
-          <p className="text-sm text-zinc-400">
+          <h1 className="display text-3xl">Управление</h1>
+          <p className="mt-1 text-sm text-[var(--text-subtle)]">
             Добавляй друзей и записывай каждый раз с причиной
           </p>
         </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="rounded-xl border border-zinc-700 px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
-        >
+        <button type="button" onClick={handleLogout} className="btn-secondary">
           Выйти
         </button>
       </div>
 
-      {message && (
-        <p className="rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm text-green-300">
-          {message}
-        </p>
-      )}
-      {error && (
-        <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-300">
-          {error}
-        </p>
-      )}
+      {message && <p className="alert-success">{message}</p>}
+      {error && <p className="alert-error">{error}</p>}
 
       <form
         onSubmit={handleSubmit}
-        className="grid gap-4 rounded-3xl border border-zinc-800 bg-zinc-900/60 p-6 sm:grid-cols-2"
+        className="surface-elevated grid gap-4 rounded-2xl p-6 sm:grid-cols-2"
       >
-        <h2 className="sm:col-span-2 text-lg font-semibold text-white">
+        <h2 className="display sm:col-span-2 text-xl">
           {editingId ? "Редактировать друга" : "Добавить друга"}
         </h2>
 
@@ -249,20 +234,17 @@ export function AdminPanel() {
           onChange={(event) => setForm({ ...form, name: event.target.value })}
           placeholder="Имя"
           required
-          className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-amber-400"
+          className="input"
         />
         <input
           value={form.emoji}
           onChange={(event) => setForm({ ...form, emoji: event.target.value })}
           placeholder="Эмодзи"
-          className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-amber-400"
+          className="input"
         />
 
         <div className="flex gap-3 sm:col-span-2">
-          <button
-            type="submit"
-            className="rounded-xl bg-amber-400 px-6 py-3 font-semibold text-zinc-950 hover:bg-amber-300"
-          >
+          <button type="submit" className="btn px-6 py-3">
             {editingId ? "Сохранить" : "Добавить"}
           </button>
           {editingId && (
@@ -272,7 +254,7 @@ export function AdminPanel() {
                 setEditingId(null);
                 setForm(emptyForm);
               }}
-              className="rounded-xl border border-zinc-700 px-6 py-3 text-zinc-300 hover:bg-zinc-800"
+              className="btn-secondary px-6 py-3"
             >
               Отмена
             </button>
@@ -280,7 +262,7 @@ export function AdminPanel() {
         </div>
       </form>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {friends.map((friend) => {
           const isExpanded = expandedId === friend.id;
           const count = getPaymentCount(friend);
@@ -288,7 +270,7 @@ export function AdminPanel() {
           return (
             <div
               key={friend.id}
-              className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/40"
+              className="surface overflow-hidden rounded-xl"
             >
               <div className="flex flex-wrap items-center justify-between gap-4 p-4">
                 <button
@@ -298,15 +280,15 @@ export function AdminPanel() {
                   }
                   className="flex flex-1 items-center gap-3 text-left"
                 >
-                  <span className="text-2xl">{friend.emoji}</span>
+                  <span className="avatar-warm flex h-10 w-10 items-center justify-center rounded-full text-xl">
+                    {friend.emoji}
+                  </span>
                   <div>
-                    <p className="font-semibold text-white">
+                    <p className="font-medium text-[var(--text)]">
                       {friend.name}{" "}
-                      <span className="text-amber-300">
-                        — {pluralTimes(count)}
-                      </span>
+                      <span className="text-[var(--text-subtle)]">· {pluralTimes(count)}</span>
                     </p>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm text-[var(--text-subtle)]">
                       {isExpanded ? "Свернуть" : "Развернуть записи"}
                     </p>
                   </div>
@@ -315,14 +297,14 @@ export function AdminPanel() {
                   <button
                     type="button"
                     onClick={() => startEdit(friend)}
-                    className="rounded-lg border border-zinc-700 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-800"
+                    className="btn-secondary text-sm"
                   >
                     Имя
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(friend.id)}
-                    className="rounded-lg border border-red-500/30 px-3 py-1.5 text-sm text-red-300 hover:bg-red-500/10"
+                    className="rounded-full border border-[#e8c4b8] px-3 py-1.5 text-sm text-[#9b4a3a] hover:bg-[#f5ebe8]"
                   >
                     Удалить
                   </button>
@@ -330,17 +312,15 @@ export function AdminPanel() {
               </div>
 
               {isExpanded && (
-                <div className="space-y-3 border-t border-zinc-800 p-4">
+                <div className="space-y-3 border-t border-[var(--border)] bg-[var(--surface-soft)] p-4">
                   {friend.payments.map((payment, index) => (
                     <div
                       key={payment.id}
-                      className="flex flex-wrap items-start justify-between gap-3 rounded-xl bg-zinc-950/60 p-3"
+                      className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3"
                     >
                       {editingPayment?.paymentId === payment.id ? (
                         <div className="flex flex-1 gap-2">
-                          <span className="mt-2 text-sm text-amber-300">
-                            #{index + 1}
-                          </span>
+                          <span className="label mt-3">{index + 1}</span>
                           <input
                             value={editingPayment.reason}
                             onChange={(event) =>
@@ -349,19 +329,19 @@ export function AdminPanel() {
                                 reason: event.target.value,
                               })
                             }
-                            className="flex-1 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-amber-400"
+                            className="input"
                           />
                           <button
                             type="button"
                             onClick={handleSavePayment}
-                            className="rounded-lg bg-amber-400 px-3 py-2 text-sm font-medium text-zinc-950"
+                            className="btn px-3 py-2 text-sm"
                           >
                             OK
                           </button>
                           <button
                             type="button"
                             onClick={() => setEditingPayment(null)}
-                            className="rounded-lg border border-zinc-700 px-3 py-2 text-sm text-zinc-400"
+                            className="btn-secondary px-3 py-2 text-sm"
                           >
                             ✕
                           </button>
@@ -369,14 +349,12 @@ export function AdminPanel() {
                       ) : (
                         <>
                           <div className="flex gap-3">
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-xs font-bold text-amber-300">
-                              {index + 1}
-                            </span>
+                            <span className="label mt-0.5">{index + 1}</span>
                             <div>
-                              <p className="text-sm text-zinc-200">
+                              <p className="text-sm text-[var(--text)]">
                                 {payment.reason}
                               </p>
-                              <p className="text-xs text-zinc-500">
+                              <p className="mt-1 text-xs text-[var(--text-subtle)]">
                                 {formatDate(payment.date)}
                               </p>
                             </div>
@@ -391,7 +369,7 @@ export function AdminPanel() {
                                   reason: payment.reason,
                                 })
                               }
-                              className="rounded-lg border border-zinc-700 px-2 py-1 text-xs text-zinc-400 hover:bg-zinc-800"
+                              className="btn-secondary text-xs"
                             >
                               Изменить
                             </button>
@@ -400,7 +378,7 @@ export function AdminPanel() {
                               onClick={() =>
                                 handleDeletePayment(friend.id, payment.id)
                               }
-                              className="rounded-lg border border-red-500/20 px-2 py-1 text-xs text-red-400 hover:bg-red-500/10"
+                              className="rounded-full px-2 py-1 text-xs text-[#9b4a3a] hover:bg-[#f5ebe8]"
                             >
                               ✕
                             </button>
@@ -420,7 +398,7 @@ export function AdminPanel() {
                         }))
                       }
                       placeholder="Причина нового раза..."
-                      className="flex-1 rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm text-white outline-none focus:border-amber-400"
+                      className="input"
                       onKeyDown={(event) => {
                         if (event.key === "Enter") {
                           event.preventDefault();
@@ -431,7 +409,7 @@ export function AdminPanel() {
                     <button
                       type="button"
                       onClick={() => handleAddPayment(friend.id)}
-                      className="rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-amber-300"
+                      className="btn shrink-0 px-4 py-2 text-sm"
                     >
                       + Раз
                     </button>
